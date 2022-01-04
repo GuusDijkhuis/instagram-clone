@@ -34,7 +34,7 @@ export default class Register extends Component {
 				/>
 				<Button 
 					onPress={() => this.onSignIn()}
-					title="Sign Up"
+					title="Sign In"
 				/>
 			</View>
 		)
