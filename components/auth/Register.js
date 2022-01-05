@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
+
 import { getAuth, createUserWithEmailAndPassword } from "@firebase/auth";
+import { doc, setDoc } from "firebase/firestore"; 
+
+import { db } from '../../firebaseConfig';
 
 export default class Register extends Component {
 	constructor(props) {
@@ -10,7 +14,6 @@ export default class Register extends Component {
 			password: '',
 			name: ''
 		}
-
 		this.onSignUp = this.onSignUp.bind(this);
 	}
 
@@ -18,7 +21,9 @@ export default class Register extends Component {
 		const { email, password, name } = this.state;
 		const auth = getAuth();
 		createUserWithEmailAndPassword(auth, email, password)
-		.then(result => console.log(result))
+		.then((userCredentials) => {
+			setDoc(doc(db, "users", userCredentials.user.uid), { email, password, name });
+		})
 		.then(error => console.log(error))
 	}
 
