@@ -10,9 +10,16 @@ export class Main extends Component {
 		this.props.fetchUser();
 	}
 	render() {
+		const { currentUser } = this.props;
+		if( !currentUser ) {
+			return (
+				<View styles={styles.container}>
+				</View>
+			)
+		}
 		return (
 			<View styles={styles.container}>
-				<Text>User is logged in!</Text>
+				<Text>{ currentUser.name } is logged in!</Text>
 			</View>
 		)
 	}
@@ -25,6 +32,10 @@ const styles = StyleSheet.create({
 	}
 })
 
+const mapStateToProps = (store) => ({
+	currentUser: store.userState.currentUser
+})
+
 const mapDispatchProps = (dispatch) => bindActionCreators({ fetchUser }, dispatch);
 
-export default connect(null, mapDispatchProps)(Main);
+export default connect(mapStateToProps, mapDispatchProps)(Main);
