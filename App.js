@@ -1,6 +1,13 @@
 import React, { Component } from 'react'
 import { View, Text, StyleSheet } from 'react-native';
 
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from './redux/reducers';
+import thunk from 'redux-thunk';
+
+const store = createStore(rootReducer, applyMiddleware(thunk));
+
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -8,7 +15,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import LandingScreen from './components/auth/Landing';
 import RegisterScreen from './components/auth/Register';
-import LoginScreen from './components/auth/Login'
+import MainScreen from './components/Main'
  
 const Stack = createStackNavigator();
 
@@ -19,7 +26,6 @@ export class App extends Component {
 			loaded: false
 		}
 	}
-
 	componentDidMount() {
 		onAuthStateChanged(getAuth(), (user) => {
 			if(!user) {
@@ -35,7 +41,6 @@ export class App extends Component {
 			}
 		})
 	}
-
 	render() {
 		const { loggedIn, loaded } = this.state;
 
@@ -46,23 +51,20 @@ export class App extends Component {
 				</View>
 			)
 		}
-
 		if(!loggedIn) {
 			return (
 				<NavigationContainer>
 					<Stack.Navigator initialRouteName="Landing">
 						<Stack.Screen name="Landing" component={LandingScreen} options={{headerShown: false}} />
 						<Stack.Screen name="Register" component={RegisterScreen} />
-						<Stack.Screen name="Login" component={LoginScreen} />
 					</Stack.Navigator>
 				</NavigationContainer>
 			)
 		}
-		
 		return (
-			<View styles={styles.container}>
-				<Text>User is logged in!</Text>
-			</View>
+			<Provider store={store}>
+				<MainScreen />
+			</Provider>
 		)
 	}
 }
